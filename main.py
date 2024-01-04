@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import StaleElementReferenceException
 import time
 from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Alignment
 
 service = Service()
 option = webdriver.ChromeOptions()
@@ -36,7 +37,7 @@ category_input = driver.find_elements(By.CLASS_NAME, "css-bg1rzq-control")[0]
 category_input.click()
 category_input_2 = driver.find_element(By.ID, "react-select-3-input")
 category_input_2.send_keys(category)
-category_input_3 = driver.find_element(By.XPATH, "//div[contains(@class, 'css-dpec0i-option')]")
+category_input_3 = driver.find_element(By.XPATH, "//div[contains(@class, 'css-dpec0i-option')]") #japarskata, biezi met error
 category_input_3.click()
 #atslegvardi
 keyword_input = driver.find_elements(By.CLASS_NAME, "css-bg1rzq-control")[1]
@@ -91,19 +92,36 @@ max_row = ws.max_row
 ws.delete_rows(idx = 2, amount = max_row - 1)
 time.sleep(1)
 max_row = ws.max_row 
-jobs = []
-job_list = driver.find_element(By.CLASS_NAME, "vacancies-list")
 job_list_items = driver.find_elements(By.CLASS_NAME, "vacancies-list__item")
+# TO DO
+# iziet cauri visam lapam ; meiginat izgut info no paradresetajam sludinajuma lapam
 for job_item in job_list_items:
   try:
     title = job_item.find_element(By.XPATH, ".//span[contains(@class, 'vacancy-item__title')]").get_attribute("textContent")
-    #jobs.append(title)
     employer_name = job_item.find_element(By.XPATH, ".//div[contains(@class, 'jsx-3024910437') and contains(@class, 'vacancy-item__column')]").get_attribute("textContent")
     job_location = job_item.find_element(By.XPATH, ".//div[contains(@class, 'jsx-3024910437') and contains(@class, 'vacancy-item__locations')]").get_attribute("textContent")
     salary_range = job_item.find_element(By.XPATH, ".//span[contains(@class, 'jsx-3024910437') and contains(@class, 'vacancy-item__salary-label')]").get_attribute("textContent")
     dates_info = job_item.find_element(By.XPATH, ".//div[contains(@class, 'jsx-3024910437') and contains(@class, 'vacancy-item__info-secondary')]")
     dates_info_2 = dates_info.find_element(By.XPATH, ".//span[not(contains(@class, 'vacancy-item__expiry'))]").get_attribute("textContent")
     dates_info_2_space = dates_info_2.replace('Beidzas', ' | Beidzas')
+    #iziet cauri katrai sludinajuma lapai
+    job_links = []
+    job_list_items_links = job_item.find_elements(By.XPATH, ".//a[contains(@class, 'jsx-3024910437') and contains(@class, 'vacancy-item')]")
+    for job_item_link in job_list_items_links:
+      job_link = job_item_link.get_attribute("href")
+      job_links.append(job_link)
+      print(job_links)
+    for job_item_link in job_links:
+      driver.get(job_item_link)
+      time.sleep(0.5)
+      full_job_description = driver.find_elements(By.XPATH, ".//div[contains(@class, 'jsx-2212276015') and contains(@class, 'vacancy-details__section')]")
+      job_description_text = ""
+      for job_description in full_job_description:
+        job_description_text += job_description.text + "\n"
+      driver.back()
+      time.sleep(1)
+
+    time.sleep(1)
     for i in range(len(job_list_items)):
       i += 1
       ws['A'+str(i + 1)] = i
@@ -111,16 +129,19 @@ for job_item in job_list_items:
     ws['C'+str(max_row + 1)] = employer_name
     ws['D'+str(max_row + 1)] = job_location
     ws['E'+str(max_row + 1)] = salary_range
-    ws['F'+str(max_row + 1)] = dates_info_2_space
+    ws['G'+str(max_row + 1)] = dates_info_2_space
+    ws['F'+str(max_row + 1)] = job_description_text
+    #pielago 'F' kolonnu
+    ws['F'+str(max_row + 1)].alignment = Alignment(wrap_text=True)
+    ws.row_dimensions[max_row + 1].height = 30
     max_row += 1
-
+    
   except StaleElementReferenceException:
     pass
 
+driver.close()
 wb.save("result.xlsx")
 wb.close()
 
-time.sleep(4)
+time.sleep(5)
 driver.quit()
-
-#print(jobs)

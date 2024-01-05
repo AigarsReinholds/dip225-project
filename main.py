@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment
+from openpyxl.styles import Alignment
 
 service = Service()
 option = webdriver.ChromeOptions()
@@ -144,9 +145,11 @@ for job_item in job_list_items:
     ws.column_dimensions['F'].width = 150
     max_row += 1
     
+    
   except StaleElementReferenceException:
     pass
 
+driver.close()
 driver.close()
 wb.save("result.xlsx")
 wb.close()

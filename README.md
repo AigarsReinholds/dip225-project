@@ -1,7 +1,7 @@
 # Darba sludinājumu filtrs
 ## Projekta uzdevums
 
-Automātiski atlasīt darba sludinājumus pēc cilvēka noteiktiem kritērijiem. Uzzināt par jaunākajiem sludinājumiem, apskatīt informāciju, kas saistīta ar sludinājumu.
+Tīmekļa vietnē *www.cv.lv* ir nepieciešams automātiski atlasīt darba sludinājumus pēc lietotāja noteiktiem kritērijiem. Uzzināt par jaunākajiem darba piedāvājumiem un izgūt informāciju, kas saistīta ar konkrēto sludinājumu.
 
 ## Izmantotās Python bibliotēkas
 
@@ -19,5 +19,8 @@ Automātiski atlasīt darba sludinājumus pēc cilvēka noteiktiem kritērijiem.
 
 ## Programmatūras imzmantošanas metodes
 
-Pirms programmatūras palaišanas ir iespēja pielāgot filtrus atbilstošai meklēšanai.
-Kad darba sludinājumi ir tikuši atlasīti, tie tiek saglabāti Excel datnē, kur tos var brīvi apskatīt.
+Pirms programmatūras palaišanas datnē **main.py** ir iespēja pielāgot filtrus atbilstošai meklēšanai.
+
+Palaižot programmatūru, tiek nolasīti lietotāja uzstādītie filtri jeb kritēriji, tie automātiski tiek izmantoti tīmekļa vietnē, lai atrastu vēlamos rezultātus. Katram darba sludinājumam tiek iziets cauri nolasot meklēto informāciju.
+
+Kad darba sludinājumi ir veiksmīgi tikuši nolasīti, tie tiek saglabāti Excel datnē, kur tos var brīvi apskatīt.

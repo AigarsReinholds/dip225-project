@@ -95,6 +95,13 @@ max_row = ws.max_row
 job_list_items = driver.find_elements(By.CLASS_NAME, "vacancies-list__item")
 for job_item in job_list_items:
   try:
+    # izlaiz 'refugee' saiti
+    driver.execute_script("""
+      var refugee_link = document.querySelector(".vacancy-item__refugees");
+      if(refugee_link) {
+        refugee_link.parentNode.removeChild(refugee_link);
+      }
+    """)
     # izgust info no visiem sludinajumiem
     title = job_item.find_element(By.XPATH, ".//span[contains(@class, 'vacancy-item__title')]").get_attribute("textContent")
     employer_name = job_item.find_element(By.XPATH, ".//div[contains(@class, 'jsx-3024910437') and contains(@class, 'vacancy-item__column')]").get_attribute("textContent")
@@ -152,5 +159,5 @@ for job_item in job_list_items:
 driver.close()
 wb.save("result.xlsx")
 wb.close()
-time.sleep(5)
+time.sleep(1)
 driver.quit()

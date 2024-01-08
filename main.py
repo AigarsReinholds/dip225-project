@@ -22,6 +22,7 @@ keywords = ['frontend']
 # papildus filtri
 minimal_salary = 950
 typeof_job = 'Pilna slodze'
+# rezultatu kartosanas veids
 sort_results = "Parādīt jaunākos vispirms"
 
 # atrasanas vieta
@@ -66,10 +67,13 @@ typeof_job_input_3.click()
 # poga rezultatu radisanai
 span_results = driver.find_element(By.XPATH, "//span[contains(@class, 'jsx-2818744897') and contains(@class, 'search-form-footer__item')]")
 button_results = span_results.find_element(By.XPATH, "./descendant::button")
-if button_results.is_enabled():
+if button_results.is_enabled() and "btn--type-disabled" not in button_results.get_attribute("class"):
   button_results.click()
 else:
   print("0 rezultāti")
+  driver.quit()
+  exit()
+
 time.sleep(1)
 # rezultatu (vaicajumu) daudzuma 'limit' mainisana
 opened_url = driver.current_url
@@ -85,7 +89,7 @@ if(sort_results != ""):
   button_sort_newest_2 = button_sort_newest.find_element(By.XPATH, ".//descendant::span")
   button_sort_newest_2.click()
 # rezultatu saglabasana
-wb = load_workbook("result.xlsx")
+wb = load_workbook("dip225-project/result.xlsx")
 ws = wb.active
 max_row = ws.max_row
 # izdzes info, kas saglabata iepriekseja palaisanas reize
@@ -134,7 +138,7 @@ for job_item in job_list_items:
         pass
 
       driver.back()
-      time.sleep(0.5)
+      time.sleep(0.75)
 
     for i in range(len(job_list_items)):
       i += 1
@@ -157,7 +161,7 @@ for job_item in job_list_items:
     pass
 
 driver.close()
-wb.save("result.xlsx")
+wb.save("dip225-project/result.xlsx")
 wb.close()
 time.sleep(1)
 driver.quit()

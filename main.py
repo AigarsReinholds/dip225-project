@@ -89,7 +89,7 @@ if(sort_results != ""):
   button_sort_newest_2 = button_sort_newest.find_element(By.XPATH, ".//descendant::span")
   button_sort_newest_2.click()
 # rezultatu saglabasana
-wb = load_workbook("dip225-project/result.xlsx")
+wb = load_workbook("result.xlsx")
 ws = wb.active
 max_row = ws.max_row
 # izdzes info, kas saglabata iepriekseja palaisanas reize
@@ -161,7 +161,7 @@ for job_item in job_list_items:
     pass
 
 driver.close()
-wb.save("dip225-project/result.xlsx")
+wb.save("result.xlsx")
 wb.close()
 time.sleep(1)
 driver.quit()

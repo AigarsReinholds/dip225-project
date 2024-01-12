@@ -21,10 +21,20 @@ category = "Informācijas tehnoloģijas"
 keywords = ['frontend']
 # papildus filtri
 minimal_salary = 950
-typeof_job = 'Pilna slodze'
+  #alternativas: "Pilna slodze", "Pilnas slodzes maiņu darbs", "Pusslodze", "Prakse"
+typeof_job = "Pilna slodze"
 # rezultatu kartosanas veids
+  # alternativas: "Atbilstošākie vispirms" ; "Parādīt jaunākos vispirms" ; "Ar drīzāko beigu termiņu" ; "Augstākais atalgojums vispirms"
 sort_results = "Parādīt jaunākos vispirms"
 
+# aizver reklamu, ja ta paradas
+try:
+  close_ad = WebDriverWait(driver, 6).until(
+    EC.presence_of_element_located((By.CLASS_NAME, "close-modal-button__content"))
+  )
+  close_ad.click()
+except:
+  pass
 # atrasanas vieta
 location_input = driver.find_element(By.CLASS_NAME, "css-bg1rzq-control")
 location_input.click()
@@ -67,9 +77,14 @@ typeof_job_input_3.click()
 # poga rezultatu radisanai
 span_results = driver.find_element(By.XPATH, "//span[contains(@class, 'jsx-2818744897') and contains(@class, 'search-form-footer__item')]")
 button_results = span_results.find_element(By.XPATH, "./descendant::button")
-if button_results.is_enabled() and "btn--type-disabled" not in button_results.get_attribute("class"):
+button_class = button_results.get_attribute("class")
+try:
   button_results.click()
-else:
+  WebDriverWait(driver, 2.5).until(
+    EC.staleness_of(button_results)
+  )
+except:
+  # izmantojot attiecigos filtrus, netika atrasti sludinajumi
   print("0 rezultāti")
   driver.quit()
   exit()
@@ -85,11 +100,22 @@ if(sort_results != ""):
   sort_options = driver.find_element(By.XPATH, "//span[contains(@class, 'jsx-1778535529') and contains(@class, 'select')]")
   sort_options.click()
   time.sleep(1)
-  button_sort_newest = driver.find_elements(By.XPATH, "//li[contains(@class, 'jsx-1778535529') and contains(@class,'select__item')]")[1]
-  button_sort_newest_2 = button_sort_newest.find_element(By.XPATH, ".//descendant::span")
+  if(sort_results == "Atbilstošākie vispirms"):
+    button_sort_newest = sort_options.find_elements(By.XPATH, "//li[contains(@class, 'jsx-1778535529') and contains(@class,'select__item')]")[0]
+    button_sort_newest_2 = button_sort_newest.find_element(By.XPATH, ".//descendant::span")
+  elif(sort_results == "Parādīt jaunākos vispirms"):
+    button_sort_newest = sort_options.find_elements(By.XPATH, "//li[contains(@class, 'jsx-1778535529') and contains(@class,'select__item')]")[1]
+    button_sort_newest_2 = button_sort_newest.find_element(By.XPATH, ".//descendant::span")
+  elif(sort_results == "Ar drīzāko beigu termiņu"):
+    button_sort_newest = sort_options.find_elements(By.XPATH, "//li[contains(@class, 'jsx-1778535529') and contains(@class,'select__item')]")[2]
+    button_sort_newest_2 = button_sort_newest.find_element(By.XPATH, ".//descendant::span")
+  elif(sort_results == "Augstākais atalgojums vispirms"):
+    button_sort_newest = sort_options.find_elements(By.XPATH, "//li[contains(@class, 'jsx-1778535529') and contains(@class,'select__item')]")[3]
+    button_sort_newest_2 = button_sort_newest.find_element(By.XPATH, ".//descendant::span")
+
   button_sort_newest_2.click()
 # rezultatu saglabasana
-wb = load_workbook("result.xlsx")
+wb = load_workbook("dip225-project/result.xlsx")
 ws = wb.active
 max_row = ws.max_row
 # izdzes info, kas saglabata iepriekseja palaisanas reize
@@ -126,9 +152,7 @@ for job_item in job_list_items:
       job_description_text = ""
       try:
         full_job_description = WebDriverWait(driver, 2.5).until(
-          EC.presence_of_all_elements_located(
-            (By.XPATH, ".//div[contains(@class, 'jsx-2212276015') and contains(@class, 'vacancy-details__section')]")
-          )
+          EC.presence_of_all_elements_located((By.XPATH, ".//div[contains(@class, 'jsx-2212276015') and contains(@class, 'vacancy-details__section')]"))
         )
         for job_description in full_job_description:
           job_description_text += job_description.text + "\n"
@@ -161,7 +185,7 @@ for job_item in job_list_items:
     pass
 
 driver.close()
-wb.save("result.xlsx")
+wb.save("dip225-project/result.xlsx")
 wb.close()
 time.sleep(1)
 driver.quit()
